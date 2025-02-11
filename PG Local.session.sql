@@ -1,1 +1,1 @@
-SELECT * FROM atendimento
+SELECT * FROM users

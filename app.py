@@ -140,7 +140,7 @@ def abrir_configuracoes():
 # Interface principal
 root = ttk.Window(themename="superhero")
 root.title("Pós Vendas 5.0")
-root.geometry("650x450")
+root.geometry("1440x650")
 
 # Menu
 menu_bar = ttk.Menu(root)
@@ -155,20 +155,53 @@ menu_opcoes.add_command(label="Sair", command=root.quit)
 frame_form = ttk.Frame(root)
 frame_form.pack(pady=10)
 
+# Nome
 ttk.Label(frame_form, text="Nome:", font=("Arial", 10)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
 entry_nome = ttk.Entry(frame_form, width=40)
 entry_nome.grid(row=0, column=1, padx=5, pady=5)
 
+# Email
 ttk.Label(frame_form, text="Email:", font=("Arial", 10)).grid(row=1, column=0, padx=5, pady=5, sticky="w")
 entry_email = ttk.Entry(frame_form, width=40)
 entry_email.grid(row=1, column=1, padx=5, pady=5)
 
-ttk.Label(frame_form, text="Descrição:", font=("Arial", 10)).grid(row=2, column=0, padx=5, pady=5, sticky="w")
-entry_descricao = ttk.Text(frame_form, height=5, width=40)
-entry_descricao.grid(row=2, column=1, padx=5, pady=5)
+# CNPJ
+ttk.Label(frame_form, text="CNPJ:", font=("Arial", 10)).grid(row=2, column=0, padx=5, pady=5, sticky="w")
+entry_cnpj = ttk.Entry(frame_form, width=40)
+entry_cnpj.grid(row=2, column=1, padx=5, pady=5)
+
+# Cidade
+ttk.Label(frame_form, text="Cidade:", font=("Arial", 10)).grid(row=3, column=0, padx=5, pady=5, sticky="w")
+entry_cidade = ttk.Entry(frame_form, width=40)
+entry_cidade.grid(row=3, column=1, padx=5, pady=5)
+
+# UF
+ttk.Label(frame_form, text="UF:", font=("Arial", 10)).grid(row=4, column=0, padx=5, pady=5, sticky="w")
+entry_uf = ttk.Entry(frame_form, width=5)
+entry_uf.grid(row=4, column=1, padx=5, pady=5, sticky="w")
+
+# Telefone de Contato
+ttk.Label(frame_form, text="Telefone de Contato:", font=("Arial", 10)).grid(row=5, column=0, padx=5, pady=5, sticky="w")
+entry_telefone = ttk.Entry(frame_form, width=40)
+entry_telefone.grid(row=5, column=1, padx=5, pady=5)
+
+# Nota Fiscal
+ttk.Label(frame_form, text="Nota Fiscal:", font=("Arial", 10)).grid(row=6, column=0, padx=5, pady=5, sticky="w")
+entry_nota_fiscal = ttk.Entry(frame_form, width=40)
+entry_nota_fiscal.grid(row=6, column=1, padx=5, pady=5)
+
+# Valor
+ttk.Label(frame_form, text="Valor:", font=("Arial", 10)).grid(row=7, column=0, padx=5, pady=5, sticky="w")
+entry_valor = ttk.Entry(frame_form, width=40)
+entry_valor.grid(row=7, column=1, padx=5, pady=5)
+
+# Resumo da Conversa
+ttk.Label(frame_form, text="Resumo da Conversa:", font=("Arial", 10)).grid(row=8, column=0, padx=5, pady=5, sticky="w")
+entry_resumo = ttk.Text(frame_form, height=5, width=40)
+entry_resumo.grid(row=8, column=1, padx=5, pady=5)
 
 btn_adicionar = ttk.Button(frame_form, text="Adicionar Atendimento", bootstyle=SUCCESS, command=adicionar_atendimento)
-btn_adicionar.grid(row=3, column=0, columnspan=2, pady=10)
+btn_adicionar.grid(row=10, column=0, columnspan=2, pady=10)
 
 # Tabela de Atendimentos
 frame_table = ttk.Frame(root)
@@ -176,12 +209,15 @@ frame_table.pack(pady=10)
 
 columns = ("ID", "Cliente", "Email", "Resumo")
 tree = ttk.Treeview(frame_table, columns=columns, show="headings", bootstyle=INFO)
+
 for col in columns:
     tree.heading(col, text=col)
     tree.column(col, width=150)
 tree.pack()
 
+# Carrega os atendimentos
 carregar_atendimentos()
+
 
 # Executa a aplicação
 root.mainloop()
