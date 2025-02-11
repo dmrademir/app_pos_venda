@@ -1,6 +1,6 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from tkinter import messagebox
+from tkinter import messagebox, Toplevel
 import psycopg2
 
 # Conexão com o banco de dados
@@ -17,14 +17,14 @@ def conectar_bd():
         messagebox.showerror("Erro", f"Erro ao conectar ao banco de dados: {e}")
         return None
 
-# Função para adicionar atendimento
+# Função para adicionar atendimento com validação
 def adicionar_atendimento():
-    nome = entry_nome.get()
-    email = entry_email.get()
-    descricao = entry_descricao.get("1.0", ttk.END).strip()
+    nome = entry_nome.get().strip()
+    email = entry_email.get().strip()
+    descricao = entry_descricao.get("1.0", "end").strip()
 
     if not nome or not email or not descricao:
-        messagebox.showwarning("Campos obrigatórios", "Preencha todos os campos!")
+        messagebox.showwarning("Atenção", "Todos os campos são obrigatórios!")
         return
 
     try:
@@ -33,28 +33,28 @@ def adicionar_atendimento():
             return
         cur = conn.cursor()
 
-        # Verifica se o cliente já existe
-        cur.execute("SELECT id FROM clientes WHERE email = %s", (email,))
-        cliente = cur.fetchone()
-        if not cliente:
+        # Verifica se o usuário já existe
+        cur.execute("SELECT id FROM users WHERE email = %s", (email,))
+        user = cur.fetchone()
+        if not user:
             cur.execute(
-                "INSERT INTO clientes (nome, email) VALUES (%s, %s) RETURNING id",
-                (nome, email),
+                "INSERT INTO users (nome, email, senha) VALUES (%s, %s, %s) RETURNING id",
+                (nome, email, "default123"),
             )
-            cliente_id = cur.fetchone()[0]
+            user_id = cur.fetchone()[0]
         else:
-            cliente_id = cliente[0]
+            user_id = user[0]
 
         # Adiciona o atendimento
         cur.execute(
-            "INSERT INTO atendimentos (cliente_id, descricao, status) VALUES (%s, %s, %s)",
-            (cliente_id, descricao, "Aberto"),
+            "INSERT INTO atendimento (user_id, cliente, email, resumo_conversa) VALUES (%s, %s, %s, %s)",
+            (user_id, nome, email, descricao),
         )
         conn.commit()
-        messagebox.showinfo("Sucesso", "Atendimento adicionado com sucesso!")
-        entry_nome.delete(0, ttk.END)
-        entry_email.delete(0, ttk.END)
-        entry_descricao.delete("1.0", ttk.END)
+        messagebox.showinfo("Sucesso", "Atendimento registrado com sucesso!")
+        entry_nome.delete(0, "end")
+        entry_email.delete(0, "end")
+        entry_descricao.delete("1.0", "end")
         carregar_atendimentos()
     except Exception as e:
         messagebox.showerror("Erro", f"Erro ao adicionar atendimento: {e}")
@@ -72,47 +72,109 @@ def carregar_atendimentos():
         if conn is None:
             return
         cur = conn.cursor()
-        cur.execute("""
-            SELECT a.id, c.nome, a.descricao, a.status 
-            FROM atendimentos a 
-            JOIN clientes c ON a.cliente_id = c.id
-        """)
+        cur.execute("SELECT id, cliente, email, resumo_conversa FROM atendimento")
         for row in cur.fetchall():
-            tree.insert("", ttk.END, values=row)
+            tree.insert("", "end", values=row)
     except Exception as e:
         messagebox.showerror("Erro", f"Erro ao carregar atendimentos: {e}")
     finally:
         if conn:
             conn.close()
 
-# Criação da interface gráfica
-root = ttk.Window(themename="solar")
+# Tela de Configurações do Usuário
+def abrir_configuracoes():
+    config_window = Toplevel(root)
+    config_window.title("Configurações do Usuário")
+    config_window.geometry("350x250")
+
+    ttk.Label(config_window, text="Nome:", font=("Arial", 10)).pack(pady=5)
+    entry_nome_config = ttk.Entry(config_window, width=40)
+    entry_nome_config.pack()
+
+    ttk.Label(config_window, text="Email:", font=("Arial", 10)).pack(pady=5)
+    entry_email_config = ttk.Entry(config_window, width=40)
+    entry_email_config.pack()
+
+    ttk.Label(config_window, text="Nova Senha:", font=("Arial", 10)).pack(pady=5)
+    entry_senha_config = ttk.Entry(config_window, width=40, show="*")
+    entry_senha_config.pack()
+
+    def salvar_configuracoes():
+        nome = entry_nome_config.get().strip()
+        email = entry_email_config.get().strip()
+        senha = entry_senha_config.get().strip()
+
+        if not nome or not email:
+            messagebox.showwarning("Atenção", "Nome e email são obrigatórios!")
+            return
+
+        try:
+            conn = conectar_bd()
+            if conn is None:
+                return
+            cur = conn.cursor()
+            
+            # Atualiza ou insere o usuário no banco
+            cur.execute(
+                """
+                INSERT INTO users (nome, email, senha) 
+                VALUES (%s, %s, %s) 
+                ON CONFLICT (email) 
+                DO UPDATE SET nome = EXCLUDED.nome, senha = EXCLUDED.senha
+                """,
+                (nome, email, senha if senha else "default123"),
+            )
+            
+            conn.commit()
+            messagebox.showinfo("Sucesso", "Configurações atualizadas com sucesso!")
+            config_window.destroy()
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao salvar configurações: {e}")
+        finally:
+            if conn:
+                conn.close()
+
+    btn_salvar = ttk.Button(config_window, text="Salvar", bootstyle=SUCCESS, command=salvar_configuracoes)
+    btn_salvar.pack(pady=10)
+
+# Interface principal
+root = ttk.Window(themename="superhero")
 root.title("Pós Vendas 5.0")
+root.geometry("650x450")
+
+# Menu
+menu_bar = ttk.Menu(root)
+root.config(menu=menu_bar)
+menu_opcoes = ttk.Menu(menu_bar, tearoff=0)
+menu_bar.add_cascade(label="Opções", menu=menu_opcoes)
+menu_opcoes.add_command(label="Configurações do Usuário", command=abrir_configuracoes)
+menu_opcoes.add_separator()
+menu_opcoes.add_command(label="Sair", command=root.quit)
 
 # Formulário de Atendimento
-frame_form = ttk.Frame(root, padding=10)
+frame_form = ttk.Frame(root)
 frame_form.pack(pady=10)
 
-ttk.Label(frame_form, text="Nome:").grid(row=0, column=0, padx=5, pady=5, sticky=W)
-entry_nome = ttk.Entry(frame_form)
+ttk.Label(frame_form, text="Nome:", font=("Arial", 10)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
+entry_nome = ttk.Entry(frame_form, width=40)
 entry_nome.grid(row=0, column=1, padx=5, pady=5)
 
-ttk.Label(frame_form, text="Email:").grid(row=1, column=0, padx=5, pady=5, sticky=W)
-entry_email = ttk.Entry(frame_form)
+ttk.Label(frame_form, text="Email:", font=("Arial", 10)).grid(row=1, column=0, padx=5, pady=5, sticky="w")
+entry_email = ttk.Entry(frame_form, width=40)
 entry_email.grid(row=1, column=1, padx=5, pady=5)
 
-ttk.Label(frame_form, text="Descrição:").grid(row=2, column=0, padx=5, pady=5, sticky=W)
+ttk.Label(frame_form, text="Descrição:", font=("Arial", 10)).grid(row=2, column=0, padx=5, pady=5, sticky="w")
 entry_descricao = ttk.Text(frame_form, height=5, width=40)
 entry_descricao.grid(row=2, column=1, padx=5, pady=5)
 
-btn_adicionar = ttk.Button(frame_form, text="Adicionar Atendimento", command=adicionar_atendimento, bootstyle=SUCCESS)
+btn_adicionar = ttk.Button(frame_form, text="Adicionar Atendimento", bootstyle=SUCCESS, command=adicionar_atendimento)
 btn_adicionar.grid(row=3, column=0, columnspan=2, pady=10)
 
 # Tabela de Atendimentos
-frame_table = ttk.Frame(root, padding=10)
-frame_table.pack()
+frame_table = ttk.Frame(root)
+frame_table.pack(pady=10)
 
-columns = ("ID", "Cliente", "Descrição", "Status")
+columns = ("ID", "Cliente", "Email", "Resumo")
 tree = ttk.Treeview(frame_table, columns=columns, show="headings", bootstyle=INFO)
 for col in columns:
     tree.heading(col, text=col)
