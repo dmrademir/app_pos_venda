@@ -22,7 +22,7 @@ class ConfiguracaoFonte:
 
 class Aplicacao(ttk.Window):
     def __init__(self):
-        super().__init__(themename="litera")
+        super().__init__(themename="solar")
         self.title("Pós Vendas 5.0")
         self.geometry("1398x800")
         self.position_center()
