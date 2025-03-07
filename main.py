@@ -4,25 +4,9 @@ from atendimento import AtendimentoFrame
 from configuracoes import ConfiguracoesFrame
 
 
-class ConfiguracaoFonte:
-    """Gerencia o tipo e o tamanho da fonte usada na aplicação."""
-    def __init__(self):
-        self.fonte_familia = "Arial"
-        self.fonte_tamanho = 12
-
-    def atualizar_fonte(self, familia, tamanho):
-        """Atualiza a fonte da aplicação."""
-        self.fonte_familia = "Arial"
-        self.fonte_tamanho = 15
-
-    def obter_fonte(self):
-        """Retorna a fonte formatada."""
-        return (self.fonte_familia, self.fonte_tamanho)
-
-
 class Aplicacao(ttk.Window):
     def __init__(self):
-        super().__init__(themename="solar")
+        super().__init__(themename="ruvolo")
         self.title("Pós Vendas 5.0")
         self.geometry("1398x800")
         self.position_center()
@@ -65,7 +49,7 @@ class Aplicacao(ttk.Window):
     def mostrar_atendimento(self):
         """Exibe a tela de Atendimento"""
         self.ocultar_frames()
-        self.frame_atendimento.pack(side=LEFT,fill=Y, padx=10, pady=50, expand=False ) #side=LEFT, fill=Y, padx=10, pady=150, anchor="n"
+        self.frame_atendimento.pack(side=LEFT,fill=Y, padx=10, pady=50, expand=False ) 
 
     def mostrar_configuracoes(self):
         """Exibe a tela de Configurações"""
