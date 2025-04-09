@@ -1,0 +1,2 @@
+ALTER TABLE users
+ADD COLUMN tipo_de_user VARCHAR(50);
