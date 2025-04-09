@@ -7,16 +7,20 @@ from configuracoes import ConfiguracoesFrame
 class Aplicacao(ttk.Window):
     def __init__(self):
         super().__init__(themename="ruvolo")
-        self.title("Pós Vendas 5.0")
-        self.geometry("1398x800")
+        self.title("Pós-Vendas 6.0")
+        self.geometry("1600x900")
         self.position_center()
+
+        # Configurando a fonte padrão da aplicação
+        self.style.configure('TEntry', font=('Helvetica', 18))
 
         # Criando o menu lateral fixo à esquerda e alinhado ao topo
         self.frame_menu = ttk.Frame(self)
         self.frame_menu.pack(side=LEFT, fill=Y, padx=10, pady=150, anchor="n")  # Alinhado ao topo
 
+        
         # Criando botões de navegação (maiores e alinhados à esquerda)
-        btn_config = {"padding": (30, 10), "width": 30}  # Configuração base dos botões
+        btn_config = {"padding": (30, 10), "width": 10}  # Configuração base dos botões
 
         self.btn_home = ttk.Button(
             self.frame_menu, text="Home", bootstyle=PRIMARY, command=self.voltar_home, **btn_config
