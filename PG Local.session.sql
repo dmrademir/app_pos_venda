@@ -1,0 +1,6 @@
+-- UPDATE users
+-- SET senha = 'rafael123'
+-- WHERE nome = 'Rafael Barros'
+-- SELECT * FROM atendimentos;
+-- ALTER TABLE atendimentos
+-- ADD COLUMN status VARCHAR(20) DEFAULT 'pendente';

@@ -1,0 +1,2 @@
+--INSERT into users (nome, email, senha, tipo_de_user)
+--VALUES ('Rafael Barros', 'rafael@ruvolo.com.br', '123456', 'analista')
