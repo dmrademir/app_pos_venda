@@ -6,7 +6,7 @@ from configuracoes import ConfiguracoesFrame
 
 class Aplicacao(ttk.Window):
     def __init__(self):
-        super().__init__(themename="litera")
+        super().__init__(themename="cyborg")
         self.title("Pós-Vendas 6.0")
         self.geometry("1600x900")
         self.position_center()
