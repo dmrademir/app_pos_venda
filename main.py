@@ -1,80 +1,54 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-from atendimento import AtendimentoFrame
-from configuracoes import ConfiguracoesFrame
-
+from atendimento_frame import AtendimentoFrame
 
 class Aplicacao(ttk.Window):
     def __init__(self):
-        super().__init__(themename="cyborg")
-        self.title("Pós-Vendas 6.0")
+        super().__init__(themename="superhero")
+        self.title("Pós Vendas 5.0")
         self.geometry("1600x900")
         self.position_center()
 
-        # Configurando a fonte padrão da aplicação
-        self.style.configure('TEntry', font=('Helvetica', 18))
-
-        # Criando o menu lateral fixo à esquerda e alinhado ao topo
+        # Frame de menu lateral
         self.frame_menu = ttk.Frame(self)
-        self.frame_menu.pack(side=LEFT, fill=Y, padx=10, pady=150, anchor="n")  # Alinhado ao topo
+        self.frame_menu.pack(side=LEFT, fill=Y, padx=10, pady=150, anchor="n")
 
-        
-        # Criando botões de navegação (maiores e alinhados à esquerda)
-        btn_config = {"padding": (30, 10), "width": 10}  # Configuração base dos botões
+        btn_config = {"padding": (30, 10), "width": 30}
 
         self.btn_home = ttk.Button(
-            self.frame_menu, text="Home", bootstyle=PRIMARY, command=self.voltar_home, **btn_config
+            self.frame_menu, text="Home", bootstyle=PRIMARY,
+            command=self.voltar_home, **btn_config
         )
-        self.btn_home.pack(fill=Y, pady=(10, 5))  # Pequeno espaçamento superior para aproximar do topo
+        self.btn_home.pack(pady=(10, 5))
 
         self.btn_atendimento = ttk.Button(
-            self.frame_menu, text="Atendimento", bootstyle=PRIMARY, command=self.mostrar_atendimento, **btn_config
+            self.frame_menu, text="Atendimento", bootstyle=PRIMARY,
+            command=self.mostrar_atendimento, **btn_config
         )
         self.btn_atendimento.pack(pady=5)
 
-        self.btn_configuracoes = ttk.Button(
-            self.frame_menu, text="Configurações", bootstyle=PRIMARY, command=self.mostrar_configuracoes, **btn_config
-        )
-        self.btn_configuracoes.pack(pady=5)
-
         self.btn_sair = ttk.Button(
-            self.frame_menu, text="Sair", bootstyle=DANGER, command=self.quit, **btn_config
+            self.frame_menu, text="Sair", bootstyle=DANGER,
+            command=self.quit, **btn_config
         )
         self.btn_sair.pack(pady=5)
 
-        # Criando o frame principal (vazio inicialmente)
+        # Frame principal onde os conteúdos aparecerão
         self.frame_principal = ttk.Frame(self)
         self.frame_principal.pack(fill=BOTH, expand=True, padx=10, pady=10)
 
-        # Inicializando os frames (mas não exibindo nenhum por padrão)
+        # Instância do frame de atendimento
         self.frame_atendimento = AtendimentoFrame(self.frame_principal)
-        self.frame_configuracoes = ConfiguracoesFrame(self.frame_principal)
 
     def mostrar_atendimento(self):
-        """Exibe a tela de Atendimento"""
         self.ocultar_frames()
-        self.frame_atendimento.pack(side=LEFT,fill=Y, padx=10, pady=50, expand=False ) 
-
-    def mostrar_configuracoes(self):
-        """Exibe a tela de Configurações"""
-        self.ocultar_frames()
-        self.frame_configuracoes.pack(side=LEFT,fill=Y, padx=10, pady=50, expand=False)
+        self.frame_atendimento.pack(fill=BOTH, expand=True, padx=10, pady=10)
 
     def voltar_home(self):
-        """Esconde os frames ativos e retorna para a tela inicial"""
         self.ocultar_frames()
 
     def ocultar_frames(self):
-        """Esconde todos os frames antes de exibir um novo"""
         self.frame_atendimento.pack_forget()
-        self.frame_configuracoes.pack_forget()
-    
-    def atualizar_fonte(self, familia, tamanho):
-        """Atualiza a fonte da aplicação e reflete nas telas"""
-        self.config_fonte.atualizar_fonte(familia, tamanho)
-        self.frame_atendimento.aplicar_fonte()
-        self.frame_configuracoes.aplicar_fonte()
-
 
 
 if __name__ == "__main__":
