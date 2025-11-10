@@ -5,7 +5,7 @@ from atendimento_frame import AtendimentoFrame
 class Aplicacao(ttk.Window):
     def __init__(self):
         super().__init__(themename="superhero")
-        self.title("Pós Vendas 5.0")
+        self.title("Pós Vendas 6.0")
         self.geometry("1600x900")
         self.position_center()
 
